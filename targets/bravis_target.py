@@ -21,7 +21,7 @@ def scrape(
         # Create connection to database
         conn = sqlite3.connect(crawler.database)
         cursor = conn.cursor()
-        counter_1 = counter_2 = 0
+        counters = [0,0]
         base = "https://www.bravis.cz/en/"
         webpage= "bravis"
         logging.critical("SCRAPING BRAVINS")
@@ -58,66 +58,19 @@ def scrape(
                     .replace("+420", "")
                 )
                 description = soup.find("div", class_="desc").get_text(strip=True)
+                availability = soup.find("div", class_="newgallery").text.strip()
 
-                # if item is Reserved
-                gallery = soup.find("div", class_="newgallery").text.strip()
-                if "Reserved" in gallery or "Pre-reserved" in gallery:
-                    logging.info("Apartment Reserved")
+                table_name, apartment, apartment_num, state = crawler.data_validation(address, url, title, webpage, town, excluded_areas, conditions, phone, description = description, availability=availability, check_date=check_date)
+
+                if state is False:
                     continue
-                # checks if its available after a specific date
-                temp = gallery.replace("Available", "").replace(" ", "").split(".")
-                date = datetime(int(temp[2]), int(temp[1]), int(temp[0]))
-                if date < check_date:
-                    logging.info("Apartment not available soon enough")
-                    continue
-                # checks white goods
-                conditions_state = crawler.check_white_goods(conditions, description)
-                # if no white goods
-                if conditions_state[1] == 0:
-                    logging.info("Apartment has no white goods")
-                    continue
-                # checks area
-                if crawler.check_condition(excluded_areas, address):
-                    logging.info("Apartment in bad area")
-                    continue
-                # get number of rooms
-                apartment_num = crawler.get_number_of_rooms(title)
                 if apartment_num is False:
                     continue
-                # add listing to database
-                table_name = (
-                    f"apartments_{apartment_num}_bedroom_{webpage}_{town.lower().strip()}"
-                )
-                apartment = [
-                    address,
-                    url,
-                    conditions_state[0],
-                    conditions_state[1],
-                    phone,
-                ]
-                crawler.create_table(cursor, crawler.query[0], table_name)
-                if (
-                    crawler.insert_data(
-                        conn, cursor, crawler.query[1], table_name, apartment
-                    )
-                    is False
-                ):  # if listing in database skips adding it to google sheet
-                    logging.info("Apartment already in table")
-                    continue
-                # counters
-                if apartment_num == 1:
-                    counter_1 += 1
-                if apartment_num == 2:
-                    counter_2 += 1
-                # add data to google sheet
-                crawler.add_to_google_sheet(
-                    crawler.service_account,
-                    crawler.spreadsheet_id,
-                    apartment,
-                    apartment_num,
-                )
-        logging.info(f"{counter_1} new 1-Bedroom apartments added to google sheet")
-        logging.info(f"{counter_2} new 2-Bedroom apartments added to google sheet")
+                # table validation and data input
+                counters, state = crawler.table_validation(conn, cursor, table_name, apartment, apartment_num,counters)
+
+        logging.info(f"{counters[0]} new 1-Bedroom apartments added to google sheet")
+        logging.info(f"{counters[0]} new 2-Bedroom apartments added to google sheet")
 
         cursor.close()
         logging.critical("END OF BRAVIS")

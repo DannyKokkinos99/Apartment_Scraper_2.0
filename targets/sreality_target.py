@@ -34,7 +34,7 @@ def scrape(
         listings = soup.findAll("div", class_="property ng-scope")
         num_listings = int(soup.findAll("span", class_="numero ng-binding")[1].text)
         pages = math.ceil(num_listings / len(listings)) + 1
-        counter_1 = counter_2 = 0
+        counters = [0,0]
 
         for page in range(1, pages + 1):  # for each page in pages
             page_q = f"&strana={page}"
@@ -68,60 +68,17 @@ def scrape(
                     .replace("+420", "")
                 )
                 description = soup.find("div", class_="description ng-binding").text
-                # checks white goods
-                conditions_state = crawler.check_white_goods(conditions, description)
-                # if no white goods
-                if conditions_state[1] == 0:
-                    logging.info("Apartment has no white goods")
+                table_name, apartment, apartment_num, state = crawler.data_validation(address, url, title, webpage, town, excluded_areas, conditions, phone, update_date = update_date,  updated_status =  updated_status, description = description)
+
+                if state is False:
                     continue
-                # check updated date
-                if not crawler.check_condition(update_date, updated_status):
-                    logging.info("Apartment not updated recently")
-                    continue
-                # checks area
-                if crawler.check_condition(excluded_areas, address):
-                    logging.info("Apartment in bad area")
-                    continue
-                # get number of rooms
-                apartment_num = crawler.get_number_of_rooms(
-                    title
-                )  # TODO: might be bugged must check it
                 if apartment_num is False:
                     continue
-                # add listing to database
-                table_name = (
-                    f"apartments_{apartment_num}_bedroom_{webpage}_{town.lower().strip()}"
-                )
-                apartment = [
-                    address,
-                    url,
-                    conditions_state[0],
-                    conditions_state[1],
-                    phone,
-                ]
-                crawler.create_table(cursor, crawler.query[0], table_name)
-                if (
-                    crawler.insert_data(
-                        conn, cursor, crawler.query[1], table_name, apartment
-                    )
-                    is False
-                ):  # if listing in database skips adding it to google sheet
-                    logging.info("Apartment already in table")
-                    continue
-                # counters
-                if apartment_num == 1:
-                    counter_1 += 1
-                if apartment_num == 2:
-                    counter_2 += 1
-                # add data to google sheet
-                crawler.add_to_google_sheet(
-                    crawler.service_account,
-                    crawler.spreadsheet_id,
-                    apartment,
-                    apartment_num,
-                )
-        logging.info(f"{counter_1} new 1-Bedroom apartments added to google sheet")
-        logging.info(f"{counter_2} new 2-Bedroom apartments added to google sheet")
+                # table validation and data input
+                counters, state = crawler.table_validation(conn, cursor, table_name, apartment, apartment_num,counters)
+
+        logging.info(f"{counters[0]} new 1-Bedroom apartments added to google sheet")
+        logging.info(f"{counters[1]} new 2-Bedroom apartments added to google sheet")
 
         driver.close()
         cursor.close()
