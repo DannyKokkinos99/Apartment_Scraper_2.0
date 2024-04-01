@@ -110,7 +110,7 @@ class Crawler:
             )
             cursor.execute(query_formated, data)  # Insert data into table
             conn.commit()
-            logging.info(f"Adding {data[0]} to {table_name}")
+            logging.critical(f"Adding {data[0]} to {table_name}")
             return True
         except sqlite3.IntegrityError:
             return False
@@ -165,11 +165,10 @@ if __name__ == "__main__":
     CONDITIONS = ["pračk", "myčk"]
     # update_date = ["Včera", "Dnes"]
     # Sreality
-    # update_date = ["Dnes"]
-
-    # sreality_target.scrape(
-    #     crawler, RENT, CONDITIONS, BAD_AREAS, update_date, town="brno"
-    # )
+    update_date = ["Dnes"]
+    sreality_target.scrape(
+        crawler, RENT, CONDITIONS, BAD_AREAS, update_date, town="brno"
+    )
 
     # Bravis
     RENT = "https://www.bravis.cz/en/flats-for-rent?address=&typ-nemovitosti-byt+2=&typ-nemovitosti-byt+3=&action=search&mapa="
