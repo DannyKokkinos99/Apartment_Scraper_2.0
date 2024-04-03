@@ -69,7 +69,6 @@ def scrape(
                 )
                 description = soup.find("div", class_="description ng-binding").text
                 table_name, apartment, apartment_num, state = crawler.data_validation(address, url, title, webpage, town, excluded_areas, conditions, phone, update_date = update_date,  updated_status =  updated_status, description = description)
-
                 if state is False:
                     continue
                 if apartment_num is False:

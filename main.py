@@ -13,7 +13,7 @@ from pathlib import Path
 from datetime import datetime
 import gspread
 import requests
-from targets import sreality_target, bravis_target, foreigners_target
+from targets import sreality_target, bravis_target, foreigners_target, ulovdomov_target
 
 
 class Crawler:
@@ -241,6 +241,9 @@ if __name__ == "__main__":
         "Zábrdovice",
         "Řečkovice",
         "Bystrc",
+        "Útěchov",
+        "Adamov",
+        "Veverská Bítýška"
     ]
     SPREADSHEET_ID = "1v54j8oOHO9mchR_Akf05NE3WiLIEeosA9fnLOYQq3iw"  # spreadsheet ID can be found in the url
     SERVICE_ACCOUNT = "service_account.json"  # Service account token
@@ -251,13 +254,13 @@ if __name__ == "__main__":
     # Sreality
     RENT = "https://www.sreality.cz/hledani/pronajem/byty?region=Brno&velikost=2%2Bkk,2%2B1,3%2Bkk&plocha-od=50&plocha-do=10000000000&cena-od=0&cena-do=23000&region-id=5740&region-typ=municipality&k-nastehovani=ihned"
     CONDITIONS = ["pračk", "myčk"]
-    # update_date = ["Včera", "Dnes"]
+    update_date = ["Včera", "Dnes"]
     update_date = ["Dnes"]
     sreality_target.scrape(
         crawler, RENT, CONDITIONS, BAD_AREAS, update_date, town="brno"
     )
 
-    # Bravis
+    # # Bravis
     RENT = "https://www.bravis.cz/en/flats-for-rent?address=&typ-nemovitosti-byt+2=&typ-nemovitosti-byt+3=&action=search&mapa="
     CONDITIONS = ["washing machine", "dishwasher"]
     CHECK_DATE = datetime(2024, 5, 1)  # Select Move in date
@@ -267,3 +270,9 @@ if __name__ == "__main__":
     RENT = "https://www.foreigners.cz/real-estate/apartment/rent/brno?size_from=50&location=m-0-582786-0&area=15&rooms%5B0%5D=2&rooms%5B1%5D=3&price_from=0&price_to=24000"
     CONDITIONS = ["washing machine", "dishwasher"]
     foreigners_target.scrape(crawler, RENT, CONDITIONS, BAD_AREAS, town="brno")
+
+    # UlovDomov
+    RENT = "https://www.ulovdomov.cz/pronajem/bytu/brno-stred/2-1?od=50m2&dispozice=2-kk%2C3-kk&lokace="
+    CONDITIONS = ["pračk", "myčk"]
+    SEARCH_AREAS = ["Staré Brno","Brno%2C%3BVeveří", "Brno%2C%3BPonava","Brno%2C%3BLíšeň", "Brno%2C%3BObřany", "Brno%2C%3BMaloměřice%3B", "Brno%2C%3BSlatina", "Brno-střed" ]
+    ulovdomov_target.scrape(crawler, RENT, CONDITIONS, BAD_AREAS, SEARCH_AREAS, town="brno")
