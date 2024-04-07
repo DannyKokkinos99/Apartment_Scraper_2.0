@@ -13,8 +13,8 @@ def scrape(
     rent: str,
     conditions: str,
     excluded_areas: List[str],
-    update_date: List[str],
     town: str = "temp",
+    update_date = '',
 ):
     """Webscrapes sreality website"""
     try:

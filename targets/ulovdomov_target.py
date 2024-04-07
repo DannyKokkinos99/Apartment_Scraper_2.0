@@ -68,8 +68,8 @@ def scrape(
                 # table validation and data input
                 counters, state = crawler.table_validation(conn, cursor, table_name, apartment, apartment_num,counters)
 
-                logging.info(f"{counters[0]} new 1-Bedroom apartments added to google sheet")
-                logging.info(f"{counters[0]} new 2-Bedroom apartments added to google sheet")
+        logging.info(f"{counters[0]} new 1-Bedroom apartments added to google sheet")
+        logging.info(f"{counters[0]} new 2-Bedroom apartments added to google sheet")
 
         cursor.close()
         logging.critical("END OF ULOVDOMOV")

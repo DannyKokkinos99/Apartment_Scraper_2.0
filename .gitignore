@@ -41,3 +41,4 @@ venv.bak/
 
 #keys
 service_account.json
+database.db

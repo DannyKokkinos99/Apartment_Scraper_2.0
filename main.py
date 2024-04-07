@@ -55,6 +55,7 @@ class Crawler:
         availability="",
         check_date="",
     ):
+        """Validates data"""
         state = True
         # check if reserved
         if availability != "" and check_date != "":
@@ -100,6 +101,7 @@ class Crawler:
     def table_validation(
         self, conn, cursor, table_name, apartment, apartment_num, counters
     ):
+        """Validates the data then adds to table and google sheet"""
         state = True
         self.create_table(cursor, self.query[0], table_name)
         if (
@@ -238,7 +240,6 @@ if __name__ == "__main__":
     DATABASE = Path("database.db")
     QUERIES = Path("queries.sql")
     BAD_AREAS = [  # areas you want to exclude from your search
-        "Zábrdovice",
         "Řečkovice",
         "Bystrc",
         "Útěchov",
@@ -252,15 +253,15 @@ if __name__ == "__main__":
     crawler = Crawler(DATABASE, QUERIES, SERVICE_ACCOUNT, SPREADSHEET_ID)
 
     # Sreality
-    RENT = "https://www.sreality.cz/hledani/pronajem/byty?region=Brno&velikost=2%2Bkk,2%2B1,3%2Bkk&plocha-od=50&plocha-do=10000000000&cena-od=0&cena-do=23000&region-id=5740&region-typ=municipality&k-nastehovani=ihned"
+    RENT = "https://www.sreality.cz/hledani/pronajem/byty?region=Brno&velikost=2%2B1,3%2Bkk,2%2Bkk&plocha-od=50&plocha-do=10000000000&cena-od=15000&cena-do=27000&region-id=5740&region-typ=municipality"
     CONDITIONS = ["pračk", "myčk"]
-    update_date = ["Včera", "Dnes"]
-    update_date = ["Dnes"]
+    UPDATE_DATE = ["Včera", "Dnes"]
+    # update_date = ["Dnes"]
     sreality_target.scrape(
-        crawler, RENT, CONDITIONS, BAD_AREAS, update_date, town="brno"
+        crawler, RENT, CONDITIONS, BAD_AREAS, update_date= UPDATE_DATE, town="brno"
     )
 
-    # # Bravis
+    # Bravis
     RENT = "https://www.bravis.cz/en/flats-for-rent?address=&typ-nemovitosti-byt+2=&typ-nemovitosti-byt+3=&action=search&mapa="
     CONDITIONS = ["washing machine", "dishwasher"]
     CHECK_DATE = datetime(2024, 5, 1)  # Select Move in date
