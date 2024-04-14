@@ -26,8 +26,6 @@ def scrape(
         html_content = crawler.get_page_html(rent)
         # Parse the HTML content using BeautifulSoup
         soup = BeautifulSoup(html_content, "html.parser")
-        with open("test1.html", "w", encoding="utf-8") as file:
-            file.write(html_content)
         # get number of pages
         # soup = BeautifulSoup(html_content, "html.parser")
         pages = 1 #TODO: fix for variable number of pages in the future

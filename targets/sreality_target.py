@@ -28,6 +28,8 @@ def scrape(
         cursor = conn.cursor()
 
         # run selenium
+        test = "https://www.sreality.cz/?cwconsent=CP82mEAP82mEAD3ACLCSAvEsAP_gAEPgAATIJVwQgAAwAKAAsACAAFQALgAZAA6ACAAFAAKgAWgAyABoADmAIgAigBHACSAEwAJwAVQAtgBfgDCAMUAgACEgEQARQAjoBOAE6AL4AaQA4gB3ADxAH6AQgAkwBOACegFIAKyAWYAuoBgQDTgG0APkAjUBHQCaQE2gJ0AVIAtQBbgC8wGMgMkAZcA0oBqYDugHfgQHAhcBGYCTQEqwQugRQAKAAsACoAFwAQAAyABoAEQAI4ATAAqgBiAD8AISARABEgCOAE4AMsAZoA7gB-gEIAIsAXUA2gCbQFSALUAW4AvMBggDJAGXANTAhcAA.YAAAAAAAAAAA&cwszncmpone=1&cwreferrer="
+        html_content = crawler.get_page_html(test, driver) #added this line because of a new popup on the sreality website
         html_content = crawler.get_page_html(rent, driver)
         # Parse the HTML content using BeautifulSoup
         soup = BeautifulSoup(html_content, "html.parser")

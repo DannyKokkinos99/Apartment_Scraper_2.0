@@ -264,7 +264,7 @@ if __name__ == "__main__":
     # Bravis
     RENT = "https://www.bravis.cz/en/flats-for-rent?address=&typ-nemovitosti-byt+2=&typ-nemovitosti-byt+3=&action=search&mapa="
     CONDITIONS = ["washing machine", "dishwasher"]
-    CHECK_DATE = datetime(2024, 5, 1)  # Select Move in date
+    CHECK_DATE = datetime(2024, 4, 10)  # Select Move in date
     bravis_target.scrape(crawler, RENT, CONDITIONS, BAD_AREAS, CHECK_DATE, town="brno")
 
     # Foreigners
